@@ -27,7 +27,7 @@ import (
 )
 
 func init() {
-	err := plugin.RegisterPlugin(&Say{})
+	err := plugin.RegisterPlugin(&JwtSession{})
 	if err != nil {
 		log.Fatalf("failed to register plugin say: %s", err)
 	}
@@ -51,20 +51,20 @@ func (p *JwtSession) Name() string {
 }
 
 func (p *JwtSession) ParseConf(in []byte) (interface{}, error) {
-	conf := SayConf{}
+	conf := JwtSession{}
 	err := json.Unmarshal(in, &conf)
 	return conf, err
 }
 
 func (p *JwtSession) RequestFilter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
-	body := conf.(SayConf).Body
-	if len(body) == 0 {
-		return
-	}
+	// body := conf.(JwtSession)
+	// if len(body) == 0 {
+	// 	return
+	// }
 
 	w.Header().Add("X-JWT-SESSION", "Go")
-	_, err := w.Write([]byte(body))
-	if err != nil {
-		log.Errorf("failed to write: %s", err)
-	}
+	// _, err := w.Write([]byte(body))
+	// if err != nil {
+	// 	log.Errorf("failed to write: %s", err)
+	// }
 }

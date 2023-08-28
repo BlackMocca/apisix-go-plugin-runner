@@ -19,11 +19,15 @@ apisix:
   node_listen: 9080              # APISIX listening port
   enable_ipv6: false
 
+
 deployment:
   admin:
     allow_admin:               # https://nginx.org/en/docs/http/ngx_http_access_module.html#allow
       - 0.0.0.0/0              # We need to restrict ip access rules for security. 0.0.0.0/0 is for test.
-
+    enable_control: true
+    control:
+      ip: "0.0.0.0"
+      port: 9092
     admin_key:
       - name: "admin"
         key: edd1c9f034335f136f87ad84b625c8f1
@@ -33,7 +37,11 @@ deployment:
     host:                           # it's possible to define multiple etcd hosts addresses of the same etcd cluster.
       - "http://etcd:2379"          # multiple etcd address
     prefix: "/apisix"               # apisix configurations prefix
-    timeout: 30                     # 30 seconds
+    timeout: 30     
+    
+ext-plugin: 
+  path_for_test: "/tmp/go-runner.sock"
+  cmd: ["/usr/local/apisix/go-runner", "run"]
 
-  ext-plugin:
-    cmd: ["/usr/local/bin/go-runner", "run"]
+nginx_config:
+  user: root

@@ -30,13 +30,13 @@ endif
 VERSYM=main._buildVersion
 GITSHASYM=main._buildGitRevision
 BUILDOSSYM=main._buildOS
-GO_LDFLAGS ?= "-X '$(VERSYM)=$(VERSION)' -X '$(GITSHASYM)=$(GITSHA)' -X '$(BUILDOSSYM)=$(OSNAME)/$(OSARCH)'"
+GO_LDFLAGS ?= "-X '$(BUILDOSSYM)=$(OSNAME)/$(OSARCH)'"
 
 .PHONY: build
 build:
 	cd cmd/go-runner && \
-	go build $(GO_BUILD_FLAGS) -ldflags $(GO_LDFLAGS) && \
-	mv go-runner build/go-runner
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(GO_BUILD_FLAGS) -ldflags $(GO_LDFLAGS) && \
+	mv go-runner ../../build/go-runner
 
 .PHONY: lint
 lint:

@@ -23,19 +23,22 @@ services:
         container_name: apisix-dashboard
         restart: always
         volumes:
-            - ./config/apisix_dashboard/config.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+            - ./config/apisix_dashboard/config.yaml:/usr/local/apisix-dashboard/conf/conf.yaml:ro
         ports:
             - "9000:9000"
         networks:
-            apisix:
+            - apisix
 
     apisix:
-        image: "apache/apisix:3.3.0-debian"
+        image: "apache/apisix:3.4.1-debian"
         container_name: apisix
         restart: always
         volumes:
-            - ./config/apisix/config.yaml:/usr/local/apisix/conf/config.yaml
-            - ./build/go-runner:/usr/local/bin/go-runner
+            - ./config/apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+            - ./build/go-runner:/usr/local/apisix/go-runner
+        environment:
+            - APISIX_LISTEN_ADDRESS=unix:/tmp/go-runner.sock /usr/local/apisix/go-runner run
+            - APISIX_CONF_EXPIRE_TIME=3600
         depends_on:
             - etcd
         ports:
@@ -61,6 +64,15 @@ services:
             - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
         ports:
             - "2379:2379/tcp"
+        networks:
+            - apisix
+
+    testresty:
+        image: kennethreitz/httpbin
+        restart: unless-stopped
+        container_name: testresty
+        ports:
+            - "1980:80"
         networks:
             - apisix
 
