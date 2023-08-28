@@ -24,6 +24,7 @@ services:
         restart: always
         volumes:
             - ./config/apisix_dashboard/config.yaml:/usr/local/apisix-dashboard/conf/conf.yaml:ro
+            - ./config/apisix_dashboard/schema.json:/usr/local/apisix-dashboard/conf/schema.json
         ports:
             - "9000:9000"
         networks:
